@@ -1,10 +1,11 @@
+#!/usr/bin/env node
+
 import fetch from 'node-fetch'
 import inquirer from 'inquirer'
 import chalk from 'chalk'
 
 (async () => {
-  const answers = await inquirer
-    .prompt([
+  const { owner, repo, token, removeAll } = await inquirer.prompt([
       {
         type: 'input',
         name: 'owner',
@@ -22,12 +23,16 @@ import chalk from 'chalk'
         name: 'token',
         message: "GitHub access token",
         validate: Boolean
+      },
+      {
+        type: 'confirm',
+        name: 'removeAll',
+        default: false,
+        message: "Do you want to remove all deployments, including successful ones?"
       }
     ])
 
   const makeRequest = async (path = '/', options = {}) => {
-    const { owner, repo, token } = answers
-
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/${path.replace(/^\//, '')}`,
       {
@@ -59,6 +64,10 @@ import chalk from 'chalk'
       const state = statusesGetResponse[0].state
 
       if (state === 'success') {
+        if (!removeAll) {
+          continue;
+        }
+
         // Change the status if it was previously success
         await makeRequest(
           `/deployments/${id}/statuses`,
