@@ -61,6 +61,10 @@ import chalk from 'chalk'
 
       // Fetch status of the deployment. Deployments with status "success" cannot be removed
       const statusesGetResponse = await makeRequest(`/deployments/${id}/statuses`).then(res => res.json())
+      if (statusesGetResponse.length === 0) {
+        continue;
+      }
+
       const state = statusesGetResponse[0].state
 
       if (state === 'success') {

@@ -1,6 +1,6 @@
 {
   "name": "cleanup-gh-deployments",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Cleanup GitHub deployments in a matter of seconds",
   "main": "src/index.jsm",
   "dependencies": {
